@@ -1,0 +1,119 @@
+cmake_minimum_required(VERSION 3.8)
+project(auro_assessment)
+
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(gazebo_ros REQUIRED)
+find_package(gazebo_msgs REQUIRED)
+find_package(turtlebot3_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(interactive_markers REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(yaml_cpp_vendor REQUIRED)
+
+# Include directories
+include_directories(
+  include
+  ${gazebo_ros_INCLUDE_DIRS}
+)
+
+# Install Python modules
+ament_python_install_package(${PROJECT_NAME})
+
+# Install Python executables
+install(PROGRAMS
+  scripts/assessment_task_manager.py
+  scripts/item_detector.py
+  scripts/zone_visualizer.py
+  scripts/task_monitor.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install launch files
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install configuration files
+install(DIRECTORY
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install world files
+install(DIRECTORY
+  worlds
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install models
+install(DIRECTORY
+  models
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install RViz configuration
+install(DIRECTORY
+  rviz
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install urdf files
+install(DIRECTORY
+  urdf
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install meshes
+install(DIRECTORY
+  meshes
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install documentation
+install(FILES
+  README.md
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install package.xml
+install(FILES
+  package.xml
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Testing
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(ament_cmake_pytest REQUIRED)
+  
+  # Linting
+  ament_lint_auto_find_test_dependencies()
+  
+  # Python tests
+  ament_add_pytest_test(test_assessment_task_manager test/test_assessment_task_manager.py)
+  ament_add_pytest_test(test_item_detector test/test_item_detector.py)
+endif()
+
+ament_package()

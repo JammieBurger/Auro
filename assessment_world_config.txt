@@ -1,0 +1,184 @@
+# Assessment World Configuration
+# This file defines the parameters for the AURO assessment task world
+
+# Collection zones where items must be returned
+zones:
+  - name: "red_zone"
+    position: [8.0, 8.0, 0.0]  # [x, y, z] coordinates
+    item_type: "red"
+    radius: 1.5
+    marker_color: [1.0, 0.0, 0.0, 0.7]  # RGBA
+    
+  - name: "blue_zone"
+    position: [-8.0, 8.0, 0.0]
+    item_type: "blue"
+    radius: 1.5
+    marker_color: [0.0, 0.0, 1.0, 0.7]
+    
+  - name: "green_zone"
+    position: [8.0, -8.0, 0.0]
+    item_type: "green"
+    radius: 1.5
+    marker_color: [0.0, 1.0, 0.0, 0.7]
+    
+  - name: "yellow_zone"
+    position: [-8.0, -8.0, 0.0]
+    item_type: "yellow"
+    radius: 1.5
+    marker_color: [1.0, 1.0, 0.0, 0.7]
+
+# Obstacles in the world
+obstacles:
+  - name: "central_obstacle"
+    position: [0.0, 0.0, 0.0]
+    size: [2.0, 2.0, 1.0]  # [length, width, height]
+    type: "box"
+    
+  - name: "obstacle_1"
+    position: [4.0, 4.0, 0.0]
+    size: [1.5, 1.5, 1.0]
+    type: "box"
+    
+  - name: "obstacle_2"
+    position: [-4.0, -4.0, 0.0]
+    size: [1.5, 1.5, 1.0]
+    type: "box"
+    
+  - name: "obstacle_3"
+    position: [4.0, -4.0, 0.0]
+    size: [1.0, 1.0, 1.0]
+    type: "box"
+    
+  - name: "obstacle_4"
+    position: [-4.0, 4.0, 0.0]
+    size: [1.0, 1.0, 1.0]
+    type: "box"
+    
+  - name: "wall_north"
+    position: [0.0, 10.0, 0.0]
+    size: [20.0, 0.2, 2.0]
+    type: "box"
+    
+  - name: "wall_south"
+    position: [0.0, -10.0, 0.0]
+    size: [20.0, 0.2, 2.0]
+    type: "box"
+    
+  - name: "wall_east"
+    position: [10.0, 0.0, 0.0]
+    size: [0.2, 20.0, 2.0]
+    type: "box"
+    
+  - name: "wall_west"
+    position: [-10.0, 0.0, 0.0]
+    size: [0.2, 20.0, 2.0]
+    type: "box"
+
+# Areas where items can spawn
+spawn_areas:
+  - name: "main_area"
+    center: [0.0, 0.0]
+    radius: 7.0
+    exclusion_zones:
+      - center: [0.0, 0.0]
+        radius: 1.5  # Around central obstacle
+      - center: [4.0, 4.0]
+        radius: 1.0  # Around obstacle_1
+      - center: [-4.0, -4.0]
+        radius: 1.0  # Around obstacle_2
+      - center: [4.0, -4.0]
+        radius: 0.8  # Around obstacle_3
+      - center: [-4.0, 4.0]
+        radius: 0.8  # Around obstacle_4
+
+# Item parameters
+items:
+  max_per_type: 3  # Maximum items of each type in the world
+  respawn_delay: 5.0  # Seconds to wait before respawning collected items
+  collection_radius: 0.5  # Distance at which items can be collected
+  
+  # Item types and their properties
+  types:
+    red:
+      model: "red_cylinder"
+      size: [0.1, 0.1, 0.2]  # [radius, radius, height]
+      color: [1.0, 0.0, 0.0, 1.0]
+      
+    blue:
+      model: "blue_cylinder"
+      size: [0.1, 0.1, 0.2]
+      color: [0.0, 0.0, 1.0, 1.0]
+      
+    green:
+      model: "green_cylinder"
+      size: [0.1, 0.1, 0.2]
+      color: [0.0, 1.0, 0.0, 1.0]
+      
+    yellow:
+      model: "yellow_cylinder"
+      size: [0.1, 0.1, 0.2]
+      color: [1.0, 1.0, 0.0, 1.0]
+
+# Robot starting positions
+robot_positions:
+  tb3_0:
+    x: 0.0
+    y: 0.0
+    z: 0.01
+    yaw: 0.0
+    
+  tb3_1:
+    x: 2.0
+    y: 0.0
+    z: 0.01
+    yaw: 0.0
+    
+  tb3_2:
+    x: -2.0
+    y: 0.0
+    z: 0.01
+    yaw: 0.0
+
+# World physics parameters
+physics:
+  gravity: [0.0, 0.0, -9.81]
+  real_time_factor: 1.0
+  max_step_size: 0.001
+  real_time_update_rate: 1000.0
+
+# Lighting
+lighting:
+  sun:
+    direction: [0.5, 0.1, -0.9]
+    diffuse: [1.0, 1.0, 1.0, 1.0]
+    specular: [0.2, 0.2, 0.2, 1.0]
+    
+  ambient:
+    color: [0.4, 0.4, 0.4, 1.0]
+
+# Camera parameters (if using overhead camera)
+cameras:
+  overhead:
+    position: [0.0, 0.0, 15.0]
+    look_at: [0.0, 0.0, 0.0]
+    field_of_view: 1.047  # 60 degrees in radians
+    
+# Scoring parameters
+scoring:
+  points_per_item: 10
+  time_bonus_factor: 1.0  # Points per second remaining
+  efficiency_bonus: 5.0  # Bonus for multi-robot coordination
+  penalty_wrong_zone: -5  # Penalty for returning item to wrong zone
+  
+# Task parameters
+task:
+  duration: 600.0  # 10 minutes in seconds
+  success_threshold: 80  # Percentage of items that must be collected
+  
+# Visualization parameters
+visualization:
+  show_zones: true
+  show_spawn_areas: false
+  show_detection_rays: true
+  show_robot_paths: true
+  path_history_length: 100

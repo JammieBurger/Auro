@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>auro_assessment</name>
+  <version>1.0.0</version>
+  <description>
+    Assessment package for Autonomous Robotic Systems Engineering (AURO) module.
+    This package provides the simulation environment and task management for the 
+    individual coursework involving autonomous item collection and return.
+  </description>
+  
+  <maintainer email="auro-support@york.ac.uk">AURO Teaching Team</maintainer>
+  <license>MIT</license>
+  
+  <url type="website">https://github.com/UoY-RoboStar/AURO</url>
+  <url type="bugtracker">https://github.com/UoY-RoboStar/AURO/issues</url>
+  
+  <author>AURO Teaching Team</author>
+  
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  
+  <!-- Core ROS2 dependencies -->
+  <depend>rclpy</depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  
+  <!-- Gazebo dependencies -->
+  <depend>gazebo_ros</depend>
+  <depend>gazebo_msgs</depend>
+  <depend>gazebo_plugins</depend>
+  
+  <!-- TurtleBot3 dependencies -->
+  <depend>turtlebot3_msgs</depend>
+  <depend>turtlebot3_gazebo</depend>
+  <depend>turtlebot3_description</depend>
+  
+  <!-- Computer vision dependencies -->
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>camera_info_manager</depend>
+  
+  <!-- Visualization dependencies -->
+  <depend>rviz2</depend>
+  <depend>visualization_msgs</depend>
+  <depend>interactive_markers</depend>
+  
+  <!-- Navigation dependencies -->
+  <depend>nav2_msgs</depend>
+  <depend>nav2_util</depend>
+  
+  <!-- Additional utility dependencies -->
+  <depend>yaml_cpp_vendor</depend>
+  
+  <!-- Python dependencies -->
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>python3-scipy</exec_depend>
+  <exec_depend>python3-matplotlib</exec_depend>
+  
+  <!-- Test dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
