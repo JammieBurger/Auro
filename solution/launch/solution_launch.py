@@ -1,156 +1,85 @@
-import os
-from ament_index_python.packages import get_package_share_directory, get_package_prefix
-import yaml
+#!/usr/bin/env python3
 
-from launch import LaunchDescription, LaunchContext
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, Shutdown, OpaqueFunction
+import os
+from ament_index_python.packages import get_package_share_directory
+
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.actions import Node, SetParameter, SetRemap, PushRosNamespace, RosTimer
-
-
-def robot_controller_actions(context : LaunchContext):
-
-    num_robots = int(context.launch_configurations['num_robots'])
-        
-    yaml_path = os.path.join(get_package_share_directory('assessment'), 'config', 'initial_poses.yaml')
-
-    with open(yaml_path, 'r') as f:
-        configuration = yaml.safe_load(f)
-
-    initial_poses = configuration[num_robots]
-
-    actions = []
-
-    for robot_number in range(1, num_robots + 1):
-
-        robot_name = 'robot' + str(robot_number)
-
-        group = GroupAction([
-
-            PushRosNamespace(robot_name),
-            SetRemap('/tf', 'tf'),
-            SetRemap('/tf_static', 'tf_static'),
-
-            Node(
-                package='solution',
-                executable='robot_controller',
-                # prefix=['xfce4-terminal --tab --execute'], # Opens in new tab
-                # prefix=['xfce4-terminal --execute'], # Opens in new window
-                # prefix=['gnome-terminal --tab --execute'], # Opens in new tab
-                # prefix=['gnome-terminal --window --execute'], # Opens in new window
-                # prefix=['wt.exe --window 0 new-tab wsl.exe -e bash -ic'], # Opens in new tab
-                # prefix=['wt.exe wsl.exe -e bash -ic'], # Opens in new window
-                output='screen',
-                parameters=[initial_poses[robot_name]]),
-
-            # Node(
-            #     package='turtlebot3_gazebo',
-            #     executable='turtlebot3_drive',
-            #     output='screen'),
-
-        ])
-
-        actions.append(group)
-
-    return actions
+from launch_ros.actions import Node, SetParameter, SetRemap, PushRosNamespace
 
 def generate_launch_description():
-
-    package_name = 'solution'
-
-    num_robots = LaunchConfiguration('num_robots')
-    random_seed = LaunchConfiguration('random_seed')
-    experiment_duration = LaunchConfiguration('experiment_duration')
-    data_log_path = LaunchConfiguration('data_log_path')
-    data_log_filename = LaunchConfiguration('data_log_filename')
-
-    declare_num_robots_cmd = DeclareLaunchArgument(
-        'num_robots',
-        default_value='1',
-        description='Number of robots to spawn')
+    # Launch configurations
+    num_robots = LaunchConfiguration('num_robots', default='1')
+    random_seed = LaunchConfiguration('random_seed', default='42')
+    use_rviz = LaunchConfiguration('use_rviz', default='true')
+    obstacles = LaunchConfiguration('obstacles', default='true')
+    sensor_noise = LaunchConfiguration('sensor_noise', default='false')
+    headless = LaunchConfiguration('headless', default='false')
     
-    declare_random_seed_cmd = DeclareLaunchArgument(
-        'random_seed',
-        default_value='0',
-        description='Random number seed for item manager')
+    # Zone configuration
+    zone_top_left = LaunchConfiguration('zone_top_left', default='true')
+    zone_top_right = LaunchConfiguration('zone_top_right', default='true')
+    zone_bottom_left = LaunchConfiguration('zone_bottom_left', default='true')
+    zone_bottom_right = LaunchConfiguration('zone_bottom_right', default='true')
     
-    declare_experiment_duration_cmd = DeclareLaunchArgument(
-        'experiment_duration',
-        default_value='300.0',
-        description='Experiment duration in seconds')
+    # Paths
+    rviz_config = PathJoinSubstitution([
+        FindPackageShare('assessment'), 'rviz', 'namespaced.rviz'
+    ])
     
-    declare_data_log_path_cmd = DeclareLaunchArgument(
-        'data_log_path',
-        default_value = os.path.join(get_package_prefix(package_name), '../../'),
-        description='Full path to directory where data logs will be saved')
-    
-    declare_data_log_filename_cmd = DeclareLaunchArgument(
-        'data_log_filename',
-        default_value='data_log',
-        description='Filename prefix to use for data logs')
-
-    rviz_config = PathJoinSubstitution([FindPackageShare('assessment'), 'rviz', 'namespaced.rviz'])
-    rviz_windows = PathJoinSubstitution([FindPackageShare('assessment'), 'config', 'rviz_windows.yaml'])
-    # rviz_windows = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'custom_rviz_windows.yaml'])
-
-    assessment_cmd = IncludeLaunchDescription(
+    # Launch assessment world
+    assessment_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
                 FindPackageShare('assessment'),
                 'launch',
                 'assessment_launch.py'
-                ])
+            ])
         ),
-        launch_arguments={'num_robots': num_robots,
-                          'visualise_sensors': 'false',
-                          'odometry_source': 'ENCODER',
-                          'sensor_noise': 'false',
-                          'use_rviz': 'true',
-                          'rviz_config': rviz_config,
-                          'rviz_windows': rviz_windows,
-                          'obstacles': 'true',
-                          'item_manager': 'true',
-                          'random_seed': random_seed,
-                          'use_nav2': 'false',
-                          'headless': 'false',
-                          'limit_real_time_factor': 'true',
-                          'wait_for_items': 'false',
-                          # 'extra_gazebo_args': '--verbose',
-                          }.items()
+        launch_arguments={
+            'num_robots': num_robots,
+            'random_seed': random_seed,
+            'use_rviz': use_rviz,
+            'rviz_config': rviz_config,
+            'obstacles': obstacles,
+            'sensor_noise': sensor_noise,
+            'headless': headless,
+            'zone_top_left': zone_top_left,
+            'zone_top_right': zone_top_right,
+            'zone_bottom_left': zone_bottom_left,
+            'zone_bottom_right': zone_bottom_right,
+            'item_manager': 'true',
+            'wait_for_items': 'false',
+        }.items()
     )
-
-    robot_controller_cmd = OpaqueFunction(function=robot_controller_actions)
-
-    data_logger_cmd = Node(
-        package='solution',
-        executable='data_logger',
-        output='screen',
-        arguments=['--path', data_log_path,
-                   '--filename', data_log_filename,
-                   '--random_seed', random_seed])
-
-    timeout_cmd = RosTimer(                                         
-            period = experiment_duration,
-            actions = [                                                       
-                Shutdown(reason="Experiment timeout reached")     
-            ],
+    
+    # Robot controller node
+    robot_controller = GroupAction([
+        PushRosNamespace('robot1'),
+        SetRemap('/tf', 'tf'),
+        SetRemap('/tf_static', 'tf_static'),
+        
+        Node(
+            package='solution',
+            executable='robot_controller',
+            output='screen',
+            parameters=[{
+                'use_sim_time': True
+            }]
         )
-
+    ])
+    
+    # Create launch description
     ld = LaunchDescription()
-
+    
+    # Set global parameter
     ld.add_action(SetParameter(name='use_sim_time', value=True))
-
-    ld.add_action(declare_num_robots_cmd)
-    ld.add_action(declare_random_seed_cmd)
-    ld.add_action(declare_experiment_duration_cmd)
-    ld.add_action(declare_data_log_path_cmd)
-    ld.add_action(declare_data_log_filename_cmd)
-
-    ld.add_action(assessment_cmd)
-    ld.add_action(robot_controller_cmd)
-    ld.add_action(data_logger_cmd)
-    ld.add_action(timeout_cmd)
-
+    
+    # Add actions
+    ld.add_action(assessment_launch)
+    ld.add_action(robot_controller)
+    
     return ld

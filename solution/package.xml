@@ -3,9 +3,21 @@
 <package format="3">
   <name>solution</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="user@todo.todo">user</maintainer>
-  <license>TODO: License declaration</license>
+  <description>AURO Assessment Solution - Autonomous Item Collection Robot</description>
+  <maintainer email="student@york.ac.uk">Student</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>assessment_interfaces</exec_depend>
+  <exec_depend>auro_interfaces</exec_depend>
+  <exec_depend>tf_transformations</exec_depend>
+  <exec_depend>angles</exec_depend>
+  <exec_depend>assessment</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
